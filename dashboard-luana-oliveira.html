@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Relatório de Campanha – Luana Oliveira</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --cor: #0EA5E9;
+      --cor-light: #E0F2FE;
+      --cor-mid: #38BDF8;
+      --cor-dark: #0369A1;
+      --bg: #F0F9FF;
+      --card-bg: #FFFFFF;
+      --text: #0C2340;
+      --text-muted: #6B7280;
+      --border: #BAE6FD;
+      --warning-bg: #FFFBEB;
+      --warning-border: #F59E0B;
+      --radius: 14px;
+      --shadow: 0 2px 12px rgba(14,165,233,0.10);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    /* HEADER */
+    .header {
+      background: linear-gradient(135deg, var(--cor-dark) 0%, var(--cor) 60%, var(--cor-mid) 100%);
+      color: #fff;
+      padding: 32px 20px 36px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -50px; right: -50px;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      pointer-events: none;
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; left: -40px;
+      width: 240px; height: 240px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      pointer-events: none;
+    }
+    .header-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.35);
+      border-radius: 999px;
+      padding: 4px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 14px;
+    }
+    .header h1 {
+      font-size: clamp(26px, 7vw, 42px);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+    .header .subtitle {
+      font-size: 14px;
+      opacity: 0.85;
+      margin-bottom: 16px;
+    }
+    .header .updated {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.18);
+      border-radius: 999px;
+      padding: 6px 16px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* CONTAINER */
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 16px 48px;
+    }
+
+    /* AVISO */
+    .aviso {
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      border-left: 4px solid var(--warning-border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin-bottom: 28px;
+      font-size: 13px;
+      color: #92400E;
+    }
+    .aviso strong { display: block; margin-bottom: 4px; font-size: 13.5px; }
+
+    /* SECTION TITLE */
+    .section-title {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--cor);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--cor-light);
+    }
+
+    /* DESTAQUE CARD */
+    .destaque-card {
+      background: linear-gradient(135deg, var(--cor-dark), var(--cor));
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 20px 20px;
+      margin-bottom: 28px;
+      box-shadow: 0 4px 20px rgba(14,165,233,0.3);
+    }
+    .destaque-card .destaque-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      opacity: 0.8;
+      margin-bottom: 6px;
+    }
+    .destaque-card .destaque-val {
+      font-size: clamp(32px, 9vw, 52px);
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .destaque-card .destaque-sub { font-size: 13px; opacity: 0.8; }
+
+    /* KPI GRID */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    @media (min-width: 600px) {
+      .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    .kpi-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 18px 14px 16px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .kpi-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(14,165,233,0.16);
+    }
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--cor-dark), var(--cor-mid));
+    }
+    .kpi-icon { font-size: 24px; margin-bottom: 10px; display: block; }
+    .kpi-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+    .kpi-value {
+      font-size: clamp(20px, 5.5vw, 30px);
+      font-weight: 800;
+      color: var(--cor);
+      line-height: 1.1;
+      margin-bottom: 5px;
+    }
+    .kpi-sub { font-size: 11px; color: var(--text-muted); line-height: 1.35; }
+
+    /* CHARTS GRID */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    @media (min-width: 640px) {
+      .charts-grid { grid-template-columns: 1fr 1fr; }
+    }
+    .chart-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px 16px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+    .chart-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+    .chart-wrap { position: relative; height: 230px; }
+
+    /* TABELA */
+    .table-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px 16px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      margin-bottom: 32px;
+    }
+    .metric-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 0;
+      border-bottom: 1px solid #EBF5FB;
+    }
+    .metric-row:last-child { border-bottom: none; }
+    .metric-name {
+      flex: 0 0 155px;
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .metric-val {
+      flex: 0 0 95px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      text-align: right;
+    }
+    .metric-bar-wrap {
+      flex: 1;
+      height: 8px;
+      background: var(--cor-light);
+      border-radius: 999px;
+      overflow: hidden;
+      min-width: 40px;
+    }
+    .metric-bar {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--cor-dark), var(--cor-mid));
+    }
+
+    /* INFO GRID */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .info-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 24px 16px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+    .info-card .ico { font-size: 36px; margin-bottom: 10px; }
+    .info-card .info-val {
+      font-size: clamp(28px, 8vw, 42px);
+      font-weight: 800;
+      color: var(--cor);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .info-card .info-label {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 28px 16px;
+      font-size: 12px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+    }
+    footer strong { color: var(--cor); }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge">📈 Relatório de Performance · Meta Ads</div>
+  <h1>Luana Oliveira</h1>
+  <p class="subtitle">01 de maio de 2026 – 22 de maio de 2026</p>
+  <span class="updated">🟢 Dados atualizados em 23/05/2026</span>
+</div>
+
+<div class="container">
+
+  <div class="aviso">
+    <strong>⚠️ Sobre o período exibido</strong>
+    Os dados exibidos correspondem ao período de campanha ativa (01/05 a 22/05/2026). Meses anteriores serão incluídos conforme o histórico for sincronizado com o Meta Ads Manager.
+  </div>
+
+  <!-- DESTAQUE -->
+  <div class="destaque-card">
+    <div class="destaque-label">Investimento Total no Período</div>
+    <div class="destaque-val">R$ 5.215,89</div>
+    <div class="destaque-sub">Campanha de alto volume · 835.947 impressões geradas</div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="section-title">Indicadores Principais</div>
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <span class="kpi-icon">💰</span>
+      <div class="kpi-label">Investimento Total</div>
+      <div class="kpi-value">R$&nbsp;5.215,89</div>
+      <div class="kpi-sub">Total investido no período</div>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-icon">👆</span>
+      <div class="kpi-label">Cliques no Link</div>
+      <div class="kpi-value">56.951</div>
+      <div class="kpi-sub">Acessos diretos à página de destino</div>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-icon">📊</span>
+      <div class="kpi-label">CTR – Taxa de Cliques</div>
+      <div class="kpi-value">7,10%</div>
+      <div class="kpi-sub">A cada 100 visualizações, ~7 clicaram</div>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-icon">💵</span>
+      <div class="kpi-label">CPC – Custo por Clique</div>
+      <div class="kpi-value">R$&nbsp;0,088</div>
+      <div class="kpi-sub">Custo médio de cada clique no link</div>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-icon">👥</span>
+      <div class="kpi-label">Alcance</div>
+      <div class="kpi-value">436.533</div>
+      <div class="kpi-sub">Pessoas únicas impactadas</div>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-icon">❤️</span>
+      <div class="kpi-label">Engajamento Total</div>
+      <div class="kpi-value">383.885</div>
+      <div class="kpi-sub">Curtidas, cliques, reações e interações</div>
+    </div>
+  </div>
+
+  <!-- GRÁFICOS -->
+  <div class="section-title">Gráficos de Performance</div>
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-title">🍩 Distribuição de Ações</div>
+      <div class="chart-wrap">
+        <canvas id="chartDonut"></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">📊 Métricas Principais</div>
+      <div class="chart-wrap">
+        <canvas id="chartBar"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABELA -->
+  <div class="section-title">Detalhamento Completo de Métricas</div>
+  <div class="table-card">
+    <div id="tabela-metricas"></div>
+  </div>
+
+  <!-- SEGUIDORES + VÍDEO -->
+  <div class="section-title">Crescimento e Vídeo</div>
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="ico">📣</div>
+      <div class="info-val">1.164</div>
+      <div class="info-label">Novos Seguidores da Página</div>
+    </div>
+    <div class="info-card">
+      <div class="ico">▶️</div>
+      <div class="info-val">292.921</div>
+      <div class="info-label">Visualizações de Vídeo</div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Relatório gerado por <strong>Caribe Tráfego</strong> · 23/05/2026 · Dados extraídos diretamente do Meta Ads Manager
+</footer>
+
+<script>
+  const fmt = (n, dec) => n.toLocaleString('pt-BR', {
+    minimumFractionDigits: dec || 0,
+    maximumFractionDigits: dec || 0
+  });
+
+  // --- Donut ---
+  new Chart(document.getElementById('chartDonut').getContext('2d'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Reações', 'Cliques no Link', 'Salvamentos', 'Outras Ações'],
+      datasets: [{
+        data: [31228, 56951, 1497, 294209],
+        backgroundColor: ['#0EA5E9','#38BDF8','#7DD3FC','#BAE6FD'],
+        borderWidth: 2,
+        borderColor: '#fff',
+        hoverOffset: 10
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '65%',
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { font: { size: 11 }, padding: 10, usePointStyle: true, pointStyleWidth: 8 }
+        },
+        tooltip: {
+          callbacks: {
+            label: ctx => '  ' + ctx.label + ': ' + fmt(ctx.raw)
+          }
+        }
+      }
+    }
+  });
+
+  // --- Bar ---
+  new Chart(document.getElementById('chartBar').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: ['Impressões', 'Alcance', 'Cliques Totais', 'Cliques no Link', 'Engajamento'],
+      datasets: [{
+        label: 'Maio 2026',
+        data: [835947, 436533, 59341, 56951, 383885],
+        backgroundColor: ['#0EA5E9','#38BDF8','#0EA5E9','#38BDF8','#0EA5E9'],
+        borderRadius: 7,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => '  ' + ctx.dataset.label + ': ' + fmt(ctx.raw)
+          }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { font: { size: 10 }, callback: v => v >= 1000 ? (v/1000).toFixed(0)+'k' : v },
+          grid: { color: '#EBF5FB' }
+        },
+        x: { ticks: { font: { size: 10 } }, grid: { display: false } }
+      }
+    }
+  });
+
+  // --- Tabela ---
+  const metricas = [
+    { nome: 'Impressões',           val: 835947, tipo: 'num' },
+    { nome: 'Alcance',              val: 436533, tipo: 'num' },
+    { nome: 'Cliques Totais',       val: 59341,  tipo: 'num' },
+    { nome: 'Cliques no Link',      val: 56951,  tipo: 'num' },
+    { nome: 'Cliques Únicos',       val: 46845,  tipo: 'num' },
+    { nome: 'CTR',                  val: 7.10,   tipo: 'pct' },
+    { nome: 'CPC',                  val: 0.088,  tipo: 'brl' },
+    { nome: 'CPM',                  val: 6.24,   tipo: 'brl' },
+    { nome: 'Engajamento Total',    val: 383885, tipo: 'num' },
+    { nome: 'Reações',              val: 31228,  tipo: 'num' },
+    { nome: 'Salvamentos',          val: 1497,   tipo: 'num' },
+    { nome: 'Landing Page Views',   val: 16845,  tipo: 'num' },
+    { nome: 'Visualiz. de Vídeo',   val: 292921, tipo: 'num' },
+  ];
+
+  const maxNum = Math.max(...metricas.filter(m => m.tipo === 'num').map(m => m.val));
+
+  function fmtVal(m) {
+    if (m.tipo === 'pct') return fmt(m.val, 2) + '%';
+    if (m.tipo === 'brl') return 'R$ ' + fmt(m.val, 3);
+    return fmt(m.val);
+  }
+  function barra(m) {
+    if (m.tipo !== 'num') return 28;
+    return Math.max(3, Math.round((m.val / maxNum) * 100));
+  }
+
+  const el = document.getElementById('tabela-metricas');
+  metricas.forEach(m => {
+    el.innerHTML += `
+      <div class="metric-row">
+        <div class="metric-name">${m.nome}</div>
+        <div class="metric-val">${fmtVal(m)}</div>
+        <div class="metric-bar-wrap"><div class="metric-bar" style="width:${barra(m)}%"></div></div>
+      </div>`;
+  });
+</script>
+</body>
+</html>
