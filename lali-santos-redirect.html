@@ -3,83 +3,37 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lali Santos – Livro na Amazon</title>
+  <title>Lali Santos</title>
 
-  <!-- Meta Pixel -->
+  <!-- Preconecta com Amazon imediatamente — reduz latência após redirect -->
+  <link rel="preconnect" href="https://www.amazon.com.br" crossorigin />
+  <link rel="dns-prefetch" href="https://www.amazon.com.br" />
+
+  <!-- Pixel via Image — dispara instantâneo, não depende de JS e sobrevive ao redirect mobile -->
+  <img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1800011570554414&ev=ViewContent&noscript=1" />
+
+  <!-- Meta Pixel SDK — carrega em paralelo para eventos enriquecidos -->
   <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-
-    fbq('init', '1800011570554414');
-    fbq('track', 'PageView');
-    fbq('track', 'ViewContent', {
-      content_name: 'Livro Lali Santos',
-      content_category: 'Livro',
-      content_type: 'product',
-      currency: 'BRL'
-    });
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init','1800011570554414');
+    fbq('track','PageView');
+    fbq('track','ViewContent',{content_name:'Livro Lali Santos',content_category:'Livro',content_type:'product',currency:'BRL'});
   </script>
-  <noscript>
-    <img height="1" width="1" style="display:none"
-      src="https://www.facebook.com/tr?id=1800011570554414&ev=PageView&noscript=1" />
-  </noscript>
-  <!-- Fim Meta Pixel -->
 
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      background: #0a0a0a;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    }
-    .container {
-      text-align: center;
-      color: #fff;
-      padding: 2rem;
-    }
-    .spinner {
-      width: 40px;
-      height: 40px;
-      border: 3px solid rgba(255,255,255,0.15);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      margin: 0 auto 1.2rem;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    p {
-      font-size: 0.95rem;
-      color: rgba(255,255,255,0.55);
-      letter-spacing: 0.02em;
-    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#0a0a0a;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:sans-serif}
+    p{color:rgba(255,255,255,0.5);font-size:.9rem}
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <div class="spinner"></div>
-    <p>Levando você para a Amazon…</p>
-  </div>
+  <p>Levando você para a Amazon…</p>
 
   <script>
-    // ⚠️ Substitua pela URL real do livro da Lali Santos na Amazon
-    var AMAZON_URL = 'https://www.amazon.com.br/dp/B0GL3DRR56/ref=sr_1_3?crid=38O11ROINC6GV&dib=eyJ2IjoiMSJ9.ap6dU1vYvGlqqJyKENa8Exf6LLnPIJesv_1J0TzSU_Ix_3-_jUn-Zsf3_jZ-fQFce5BGXQhssSPTHSkcltCawRDpd6vLJXYwS2Z9Hnu91slplI3ciP4ZXSqigFaJIS36nTNa5uHBoZN-iXcM5Mtbt5PDzNgdzAsDfisOQUyzj1n85UbpnYGTR4LCTG6cQeME-SuaSqq1AJxjN96quFL9pF7_hr95jrYjiSxriJgVDWFQ2VZ0qDY0yUfh4RN6bVUq_x_wc_aJ8pf9dNdSnOA2y-S1pVwwxgkIpRnoSw-lxx8.jxFtZ6Ik3qdgARGT72RIj6xJiyquJXm33_P-kvhljk8&dib_tag=se&keywords=burn+for+me&qid=1770049140&sprefix=BURN+%2Caps%2C278&sr=8-3';
-
-    // Aguarda 400ms para garantir que o pixel disparou antes do redirect
-    setTimeout(function() {
-      window.location.replace(AMAZON_URL);
-    }, 400);
+    var AMAZON_URL = 'https://www.amazon.com.br/dp/B0GL3DRR56';
+    setTimeout(function(){ window.location.replace(AMAZON_URL); }, 100);
   </script>
 
 </body>
