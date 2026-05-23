@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lali Santos – Livro na Amazon</title>
+
+  <!-- Meta Pixel -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+
+    fbq('init', '1800011570554414');
+    fbq('track', 'PageView');
+    fbq('track', 'ViewContent', {
+      content_name: 'Livro Lali Santos',
+      content_category: 'Livro',
+      content_type: 'product',
+      currency: 'BRL'
+    });
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+      src="https://www.facebook.com/tr?id=1800011570554414&ev=PageView&noscript=1" />
+  </noscript>
+  <!-- Fim Meta Pixel -->
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    .container {
+      text-align: center;
+      color: #fff;
+      padding: 2rem;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255,255,255,0.15);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto 1.2rem;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    p {
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.55);
+      letter-spacing: 0.02em;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="spinner"></div>
+    <p>Levando você para a Amazon…</p>
+  </div>
+
+  <script>
+    // ⚠️ Substitua pela URL real do livro da Lali Santos na Amazon
+    var AMAZON_URL = 'https://www.amazon.com.br/SEU-LINK-AQUI';
+
+    // Aguarda 400ms para garantir que o pixel disparou antes do redirect
+    setTimeout(function() {
+      window.location.replace(AMAZON_URL);
+    }, 400);
+  </script>
+
+</body>
+</html>
