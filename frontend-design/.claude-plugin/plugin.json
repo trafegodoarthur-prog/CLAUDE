@@ -1,0 +1,16 @@
+{
+  "name": "frontend-design",
+  "version": "0.1.0",
+  "description": "Especialista em design frontend avançado — design systems, acessibilidade, responsividade e animações para sites e apps.",
+  "keywords": [
+    "frontend",
+    "design",
+    "ui",
+    "ux",
+    "accessibility",
+    "responsive",
+    "design-system",
+    "animations"
+  ],
+  "license": "MIT"
+}

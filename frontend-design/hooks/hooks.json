@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "printf '## frontend-design plugin\\n\\nEspecialista em design frontend avançado. Disponível nesta sessão:\\n\\n**Slash commands:**\\n- /design-review — revisão crítica de design\\n- /create-component — cria componente com best practices\\n- /a11y-audit — auditoria WCAG 2.2 AA\\n- /design-tokens — gera/audita/refina tokens\\n- /responsive-check — auditoria de responsividade\\n\\n**Subagents:** design-reviewer, component-architect, a11y-auditor\\n\\n**Skills auto-ativam em:** design systems, acessibilidade, responsive design, animações.\\n'"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE=$(cat | python3 -c \"import sys,json; d=json.load(sys.stdin); print(d.get('tool_input',{}).get('file_path',''))\" 2>/dev/null); case \"$FILE\" in *.tsx|*.jsx|*.vue|*.svelte|*.astro) echo '> 💡 Componente UI editado. Considere /design-review ou /a11y-audit para validar antes do commit.';; esac"
+          }
+        ]
+      }
+    ]
+  }
+}
