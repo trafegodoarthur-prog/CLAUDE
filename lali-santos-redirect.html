@@ -9,17 +9,23 @@
   <link rel="preconnect" href="https://www.amazon.com.br" crossorigin />
   <link rel="dns-prefetch" href="https://www.amazon.com.br" />
 
-  <!-- Pixel via Image — dispara instantâneo, não depende de JS e sobrevive ao redirect mobile -->
-  <img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=1800011570554414&ev=ViewContent&noscript=1" />
-
-  <!-- Meta Pixel SDK — carrega em paralelo para eventos enriquecidos -->
+  <!-- Meta Pixel Code -->
   <script>
-    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init','1800011570554414');
-    fbq('track','PageView');
-    fbq('track','ViewContent',{content_name:'Livro Lali Santos',content_category:'Livro',content_type:'product',currency:'BRL'});
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '1800011570554414');
+  fbq('track', 'PageView');
   </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=1800011570554414&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
 
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
