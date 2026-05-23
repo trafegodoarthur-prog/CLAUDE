@@ -1,537 +1,192 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Relatório de Campanha – Luana Oliveira</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
-  <style>
-    :root {
-      --cor: #0EA5E9;
-      --cor-light: #E0F2FE;
-      --cor-mid: #38BDF8;
-      --cor-dark: #0369A1;
-      --bg: #F0F9FF;
-      --card-bg: #FFFFFF;
-      --text: #0C2340;
-      --text-muted: #6B7280;
-      --border: #BAE6FD;
-      --warning-bg: #FFFBEB;
-      --warning-border: #F59E0B;
-      --radius: 14px;
-      --shadow: 0 2px 12px rgba(14,165,233,0.10);
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
-    }
-
-    /* HEADER */
-    .header {
-      background: linear-gradient(135deg, var(--cor-dark) 0%, var(--cor) 60%, var(--cor-mid) 100%);
-      color: #fff;
-      padding: 32px 20px 36px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-    .header::before {
-      content: '';
-      position: absolute;
-      top: -50px; right: -50px;
-      width: 200px; height: 200px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.08);
-      pointer-events: none;
-    }
-    .header::after {
-      content: '';
-      position: absolute;
-      bottom: -60px; left: -40px;
-      width: 240px; height: 240px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.05);
-      pointer-events: none;
-    }
-    .header-badge {
-      display: inline-block;
-      background: rgba(255,255,255,0.2);
-      border: 1px solid rgba(255,255,255,0.35);
-      border-radius: 999px;
-      padding: 4px 16px;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      margin-bottom: 14px;
-    }
-    .header h1 {
-      font-size: clamp(26px, 7vw, 42px);
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      margin-bottom: 6px;
-    }
-    .header .subtitle {
-      font-size: 14px;
-      opacity: 0.85;
-      margin-bottom: 16px;
-    }
-    .header .updated {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(255,255,255,0.18);
-      border-radius: 999px;
-      padding: 6px 16px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-
-    /* CONTAINER */
-    .container {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 24px 16px 48px;
-    }
-
-    /* AVISO */
-    .aviso {
-      background: var(--warning-bg);
-      border: 1px solid var(--warning-border);
-      border-left: 4px solid var(--warning-border);
-      border-radius: var(--radius);
-      padding: 14px 18px;
-      margin-bottom: 28px;
-      font-size: 13px;
-      color: #92400E;
-    }
-    .aviso strong { display: block; margin-bottom: 4px; font-size: 13.5px; }
-
-    /* SECTION TITLE */
-    .section-title {
-      font-size: 12px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1.2px;
-      color: var(--cor);
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .section-title::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--cor-light);
-    }
-
-    /* DESTAQUE CARD */
-    .destaque-card {
-      background: linear-gradient(135deg, var(--cor-dark), var(--cor));
-      color: #fff;
-      border-radius: var(--radius);
-      padding: 20px 20px;
-      margin-bottom: 28px;
-      box-shadow: 0 4px 20px rgba(14,165,233,0.3);
-    }
-    .destaque-card .destaque-label {
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      opacity: 0.8;
-      margin-bottom: 6px;
-    }
-    .destaque-card .destaque-val {
-      font-size: clamp(32px, 9vw, 52px);
-      font-weight: 900;
-      letter-spacing: -1px;
-      line-height: 1;
-      margin-bottom: 4px;
-    }
-    .destaque-card .destaque-sub { font-size: 13px; opacity: 0.8; }
-
-    /* KPI GRID */
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-bottom: 32px;
-    }
-    @media (min-width: 600px) {
-      .kpi-grid { grid-template-columns: repeat(3, 1fr); }
-    }
-    .kpi-card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      padding: 18px 14px 16px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.18s ease, box-shadow 0.18s ease;
-    }
-    .kpi-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 24px rgba(14,165,233,0.16);
-    }
-    .kpi-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--cor-dark), var(--cor-mid));
-    }
-    .kpi-icon { font-size: 24px; margin-bottom: 10px; display: block; }
-    .kpi-label {
-      font-size: 10.5px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      color: var(--text-muted);
-      margin-bottom: 5px;
-    }
-    .kpi-value {
-      font-size: clamp(20px, 5.5vw, 30px);
-      font-weight: 800;
-      color: var(--cor);
-      line-height: 1.1;
-      margin-bottom: 5px;
-    }
-    .kpi-sub { font-size: 11px; color: var(--text-muted); line-height: 1.35; }
-
-    /* CHARTS GRID */
-    .charts-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-      margin-bottom: 32px;
-    }
-    @media (min-width: 640px) {
-      .charts-grid { grid-template-columns: 1fr 1fr; }
-    }
-    .chart-card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      padding: 20px 16px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-    }
-    .chart-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 18px;
-    }
-    .chart-wrap { position: relative; height: 230px; }
-
-    /* TABELA */
-    .table-card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      padding: 20px 16px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-      margin-bottom: 32px;
-    }
-    .metric-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 11px 0;
-      border-bottom: 1px solid #EBF5FB;
-    }
-    .metric-row:last-child { border-bottom: none; }
-    .metric-name {
-      flex: 0 0 155px;
-      font-size: 13px;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
-    .metric-val {
-      flex: 0 0 95px;
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--text);
-      text-align: right;
-    }
-    .metric-bar-wrap {
-      flex: 1;
-      height: 8px;
-      background: var(--cor-light);
-      border-radius: 999px;
-      overflow: hidden;
-      min-width: 40px;
-    }
-    .metric-bar {
-      height: 100%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--cor-dark), var(--cor-mid));
-    }
-
-    /* INFO GRID */
-    .info-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 32px;
-    }
-    .info-card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      padding: 24px 16px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-      text-align: center;
-    }
-    .info-card .ico { font-size: 36px; margin-bottom: 10px; }
-    .info-card .info-val {
-      font-size: clamp(28px, 8vw, 42px);
-      font-weight: 800;
-      color: var(--cor);
-      line-height: 1;
-      margin-bottom: 6px;
-    }
-    .info-card .info-label {
-      font-size: 11.5px;
-      color: var(--text-muted);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    /* FOOTER */
-    footer {
-      text-align: center;
-      padding: 28px 16px;
-      font-size: 12px;
-      color: var(--text-muted);
-      border-top: 1px solid var(--border);
-    }
-    footer strong { color: var(--cor); }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatório Meta Ads | Luana Oliveira</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0B0F1E;--card:#141827;--card2:#1A2138;--border:#252D45;--text:#E2E8F0;--muted:#8896B0;--accent:#0EA5E9;--accent2:#0369A1;--green:#10B981;--orange:#F59E0B}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text)}
+.hdr{background:var(--card);border-bottom:1px solid var(--border);padding:.75rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.hdr-logo{display:flex;align-items:center;gap:.5rem;font-weight:700;font-size:.95rem;color:var(--accent)}
+.hdr-div{width:1px;height:24px;background:var(--border)}
+.hdr-title{font-size:.82rem;color:var(--muted)}
+.hdr-title strong{color:var(--text)}
+.hdr-badge{margin-left:auto;background:var(--card2);border:1px solid var(--border);padding:.25rem .75rem;border-radius:20px;font-size:.72rem;color:var(--muted)}
+.kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);background:var(--border);gap:1px;border-bottom:1px solid var(--border)}
+.kpi{background:var(--card);padding:1.1rem 1.3rem}
+.kpi-label{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem}
+.kpi-val{font-size:1.75rem;font-weight:700;line-height:1}
+.kpi-sub{font-size:.65rem;color:var(--muted);margin-top:.2rem}
+.kpi.hl .kpi-val{color:var(--accent)}
+.main{display:grid;grid-template-columns:260px 1fr 260px;gap:1px;background:var(--border)}
+.panel{background:var(--card);padding:1.25rem}
+.sec-title{font-size:.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1rem}
+.funnel{display:flex;flex-direction:column;align-items:center;gap:2px;margin-bottom:1rem}
+.f-row{display:flex;align-items:center;justify-content:space-between;padding:.55rem .9rem;border-radius:3px}
+.f-label{font-size:.65rem;color:rgba(255,255,255,.7)}
+.f-val{font-size:1rem;font-weight:700;color:#fff}
+.f-meta{display:grid;grid-template-columns:1fr 1fr;gap:.4rem}
+.fm{background:var(--card2);border-radius:6px;padding:.5rem .6rem;text-align:center}
+.fm-l{font-size:.6rem;color:var(--muted);margin-bottom:.1rem}
+.fm-v{font-size:.85rem;font-weight:600;color:var(--text)}
+.cost-row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1rem}
+.cost-card{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:.85rem}
+.cost-card .cl{font-size:.62rem;color:var(--muted);margin-bottom:.25rem}
+.cost-card .cv{font-size:1.3rem;font-weight:700;color:var(--accent)}
+.chart-box{position:relative;height:170px}
+.m-bars{display:flex;flex-direction:column;gap:.7rem}
+.mb-row .mb-top{display:flex;justify-content:space-between;margin-bottom:.25rem}
+.mb-name{font-size:.72rem;color:var(--muted)}
+.mb-val{font-size:.72rem;font-weight:600;color:var(--text)}
+.mb-track{height:5px;background:var(--card2);border-radius:3px}
+.mb-fill{height:5px;border-radius:3px}
+.mc{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:.85rem}
+.mc-hdr{font-size:.7rem;font-weight:700;color:var(--accent);margin-bottom:.6rem;padding-bottom:.4rem;border-bottom:1px solid var(--border)}
+.mc-row{display:flex;justify-content:space-between;padding:.2rem 0;font-size:.7rem}
+.mk{color:var(--muted)}.mv{font-weight:600;color:var(--text)}
+.tbl-section{background:var(--card);margin-top:1px;padding:1.25rem}
+.camps-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.camp-group h4{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem}
+.camp-item{display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:var(--card2);border-radius:6px;margin-bottom:.3rem;font-size:.73rem}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dot.active{background:var(--green)}.dot.paused{background:var(--muted)}
+.bench{width:100%;border-collapse:collapse;font-size:.75rem;margin-top:.5rem}
+.bench th{text-align:left;padding:.4rem .6rem;color:var(--muted);font-size:.62rem;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border)}
+.bench td{padding:.55rem .6rem;border-bottom:1px solid rgba(37,45,69,.5)}
+.bench tr:hover td{background:var(--card2)}
+.tag{display:inline-block;padding:.1rem .5rem;border-radius:20px;font-size:.65rem;font-weight:600}
+.tag.green{background:rgba(16,185,129,.15);color:#10B981}
+.tag.blue{background:rgba(79,195,247,.15);color:#4FC3F7}
+.foll-card{background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;padding:1rem;text-align:center;margin-top:1rem}
+.foll-num{font-size:2.2rem;font-weight:700}
+.foll-label{font-size:.72rem;opacity:.8;margin-top:.2rem}
+.foll-page{font-size:.65rem;opacity:.65;margin-top:.1rem}
+.footer{text-align:center;padding:1rem;color:var(--muted);font-size:.68rem;border-top:1px solid var(--border)}
+@media(max-width:960px){.main{grid-template-columns:1fr}.kpi-strip{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){.kpi-strip{grid-template-columns:repeat(2,1fr)}.kpi-val{font-size:1.4rem}.camps-grid{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 
-<div class="header">
-  <div class="header-badge">📈 Relatório de Performance · Meta Ads</div>
-  <h1>Luana Oliveira</h1>
-  <p class="subtitle">01 de maio de 2026 – 22 de maio de 2026</p>
-  <span class="updated">🟢 Dados atualizados em 23/05/2026</span>
+<div class="hdr">
+  <div class="hdr-logo">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+    Meta Ads
+  </div>
+  <div class="hdr-div"></div>
+  <div class="hdr-title">Relatório de Performance — <strong>Luana Oliveira</strong></div>
+  <div class="hdr-badge">📅 01/05/2026 – 22/05/2026</div>
 </div>
 
-<div class="container">
-
-  <div class="aviso">
-    <strong>⚠️ Sobre o período exibido</strong>
-    Os dados exibidos correspondem ao período de campanha ativa (01/05 a 22/05/2026). Meses anteriores serão incluídos conforme o histórico for sincronizado com o Meta Ads Manager.
-  </div>
-
-  <!-- DESTAQUE -->
-  <div class="destaque-card">
-    <div class="destaque-label">Investimento Total no Período</div>
-    <div class="destaque-val">R$ 5.215,89</div>
-    <div class="destaque-sub">Campanha de alto volume · 835.947 impressões geradas</div>
-  </div>
-
-  <!-- KPIs -->
-  <div class="section-title">Indicadores Principais</div>
-  <div class="kpi-grid">
-    <div class="kpi-card">
-      <span class="kpi-icon">💰</span>
-      <div class="kpi-label">Investimento Total</div>
-      <div class="kpi-value">R$&nbsp;5.215,89</div>
-      <div class="kpi-sub">Total investido no período</div>
-    </div>
-    <div class="kpi-card">
-      <span class="kpi-icon">👆</span>
-      <div class="kpi-label">Cliques no Link</div>
-      <div class="kpi-value">56.951</div>
-      <div class="kpi-sub">Acessos diretos à página de destino</div>
-    </div>
-    <div class="kpi-card">
-      <span class="kpi-icon">📊</span>
-      <div class="kpi-label">CTR – Taxa de Cliques</div>
-      <div class="kpi-value">7,10%</div>
-      <div class="kpi-sub">A cada 100 visualizações, ~7 clicaram</div>
-    </div>
-    <div class="kpi-card">
-      <span class="kpi-icon">💵</span>
-      <div class="kpi-label">CPC – Custo por Clique</div>
-      <div class="kpi-value">R$&nbsp;0,088</div>
-      <div class="kpi-sub">Custo médio de cada clique no link</div>
-    </div>
-    <div class="kpi-card">
-      <span class="kpi-icon">👥</span>
-      <div class="kpi-label">Alcance</div>
-      <div class="kpi-value">436.533</div>
-      <div class="kpi-sub">Pessoas únicas impactadas</div>
-    </div>
-    <div class="kpi-card">
-      <span class="kpi-icon">❤️</span>
-      <div class="kpi-label">Engajamento Total</div>
-      <div class="kpi-value">383.885</div>
-      <div class="kpi-sub">Curtidas, cliques, reações e interações</div>
-    </div>
-  </div>
-
-  <!-- GRÁFICOS -->
-  <div class="section-title">Gráficos de Performance</div>
-  <div class="charts-grid">
-    <div class="chart-card">
-      <div class="chart-title">🍩 Distribuição de Ações</div>
-      <div class="chart-wrap">
-        <canvas id="chartDonut"></canvas>
-      </div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title">📊 Métricas Principais</div>
-      <div class="chart-wrap">
-        <canvas id="chartBar"></canvas>
-      </div>
-    </div>
-  </div>
-
-  <!-- TABELA -->
-  <div class="section-title">Detalhamento Completo de Métricas</div>
-  <div class="table-card">
-    <div id="tabela-metricas"></div>
-  </div>
-
-  <!-- SEGUIDORES + VÍDEO -->
-  <div class="section-title">Crescimento e Vídeo</div>
-  <div class="info-grid">
-    <div class="info-card">
-      <div class="ico">📣</div>
-      <div class="info-val">1.164</div>
-      <div class="info-label">Novos Seguidores da Página</div>
-    </div>
-    <div class="info-card">
-      <div class="ico">▶️</div>
-      <div class="info-val">292.921</div>
-      <div class="info-label">Visualizações de Vídeo</div>
-    </div>
-  </div>
-
+<div class="kpi-strip">
+  <div class="kpi"><div class="kpi-label">Investimento</div><div class="kpi-val" style="font-size:1.3rem">R$ 5.215,89</div><div class="kpi-sub">total no período</div></div>
+  <div class="kpi hl"><div class="kpi-label">CTR</div><div class="kpi-val">7.1%</div><div class="kpi-sub">taxa de cliques</div></div>
+  <div class="kpi"><div class="kpi-label">Cliques</div><div class="kpi-val">59.341</div><div class="kpi-sub">cliques totais</div></div>
+  <div class="kpi"><div class="kpi-label">Impressões</div><div class="kpi-val">835.947</div><div class="kpi-sub">exibições</div></div>
+  <div class="kpi"><div class="kpi-label">Alcance</div><div class="kpi-val">436.533</div><div class="kpi-sub">pessoas únicas</div></div>
 </div>
 
-<footer>
-  Relatório gerado por <strong>Caribe Tráfego</strong> · 23/05/2026 · Dados extraídos diretamente do Meta Ads Manager
-</footer>
+<div class="main">
+  <div class="panel">
+    <div class="sec-title">Funil de Tráfego</div>
+    <div class="funnel"><div class="f-row" style="width:100%;background:linear-gradient(135deg,#0EA5E9,#0369A1)"><span class="f-label">Impressões</span><span class="f-val">835.947</span></div>
+<div class="f-row" style="width:83%;background:linear-gradient(135deg,#0369A1,#1E3A8A)"><span class="f-label">Alcance</span><span class="f-val">436.533</span></div>
+<div class="f-row" style="width:63%;background:linear-gradient(135deg,#1E3A8A,#1E40AF)"><span class="f-label">Cliques</span><span class="f-val">59.341</span></div>
+<div class="f-row" style="width:44%;background:linear-gradient(135deg,#172554,#1E3A8A)"><span class="f-label">Pages Views</span><span class="f-val">16.845</span></div>
+</div>
+    <div class="f-meta">
+      <div class="fm"><div class="fm-l">CTR</div><div class="fm-v">7.1%</div></div>
+      <div class="fm"><div class="fm-l">Frequência</div><div class="fm-v">1.91</div></div>
+      <div class="fm"><div class="fm-l">CPM</div><div class="fm-v">R$ 6,24</div></div>
+      <div class="fm"><div class="fm-l">CPC</div><div class="fm-v">R$ 0,09</div></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="cost-row">
+      <div class="cost-card"><div class="cl">Custo por Page View</div><div class="cv">R$ 0,31</div></div>
+      <div class="cost-card"><div class="cl">Custo por Clique</div><div class="cv">R$ 0,09</div></div>
+    </div>
+    <div class="sec-title">Evolução — Cliques &amp; Impressões</div>
+    <div class="chart-box"><canvas id="lineChart"></canvas></div>
+  </div>
+
+  <div class="panel">
+    <div class="sec-title">Distribuição de Ações</div>
+    <div class="m-bars"><div class="mb-row"><div class="mb-top"><span class="mb-name">Cliques no Link</span><span class="mb-val">56.951</span></div><div class="mb-track"><div class="mb-fill" style="width:14.8%;background:#3B82F6"></div></div></div>
+<div class="mb-row"><div class="mb-top"><span class="mb-name">Reações</span><span class="mb-val">31.228</span></div><div class="mb-track"><div class="mb-fill" style="width:8.1%;background:#EC4899"></div></div></div>
+<div class="mb-row"><div class="mb-top"><span class="mb-name">Visualizações de Vídeo</span><span class="mb-val">292.921</span></div><div class="mb-track"><div class="mb-fill" style="width:76.3%;background:#10B981"></div></div></div>
+<div class="mb-row"><div class="mb-top"><span class="mb-name">Engajamento Total</span><span class="mb-val">383.885</span></div><div class="mb-track"><div class="mb-fill" style="width:100.0%;background:#F59E0B"></div></div></div>
+<div class="mb-row"><div class="mb-top"><span class="mb-name">Landing Page Views</span><span class="mb-val">16.845</span></div><div class="mb-track"><div class="mb-fill" style="width:4.4%;background:#8B5CF6"></div></div></div>
+<div class="mb-row"><div class="mb-top"><span class="mb-name">Salvamentos</span><span class="mb-val">1.497</span></div><div class="mb-track"><div class="mb-fill" style="width:0.4%;background:#06B6D4"></div></div></div>
+</div>
+    <div class="foll-card">
+      <div class="foll-num">1.164</div>
+      <div class="foll-label">Seguidores na Página</div>
+      <div class="foll-page">Autora Luana Oliveira</div>
+    </div>
+  </div>
+</div>
+
+<div class="tbl-section">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+    <div>
+      <div class="sec-title">Avaliação de Performance</div>
+      <table class="bench">
+        <thead><tr><th>Métrica</th><th>Valor</th><th>Benchmark</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>CTR</td><td>7.1%</td><td>> 1%</td><td><span class="tag green">Excelente 🏆</span></td></tr>
+          <tr><td>CPC</td><td>R$ 0,09</td><td>&lt; R$ 0,50</td><td><span class="tag green">Excelente 🏆</span></td></tr>
+          <tr><td>CPM</td><td>R$ 6,24</td><td>R$ 5–15</td><td><span class="tag green">Ótimo ✅</span></td></tr>
+          <tr><td>Engajamento</td><td>45.9%</td><td>> 1%</td><td><span class="tag green">Excelente 🏆</span></td></tr>
+          <tr><td>Cliques no Link</td><td>56.951</td><td>—</td><td><span class="tag blue">Registrado</span></td></tr>
+          <tr><td>Landing Page Views</td><td>16.845</td><td>—</td><td><span class="tag blue">Registrado</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div class="sec-title">Campanhas</div>
+      <div class="camps-grid">
+        <div class="camp-group"><h4>Ativas</h4><div class="camp-item"><div class="dot active"></div>[VENDAS/HOMETEAM] - LANÇAMENTO</div><div class="camp-item"><div class="dot active"></div>[A] Pré-Lançamento | Reconhecimento</div></div>
+        <div class="camp-group"><h4>Pausadas</h4><div class="camp-item"><div class="dot paused"></div>[TRAF/LANÇAMENTO]V2 - TBBG</div><div class="camp-item"><div class="dot paused"></div>[TRAFEGO] - SOM DO GELO</div><div class="camp-item"><div class="dot paused"></div>[T] Conversão | Garoto Errado</div><div class="camp-item"><div class="dot paused"></div>[T] Conversão | Fanfiction</div><div class="camp-item"><div class="dot paused"></div>FOR YOU</div><div class="camp-item"><div class="dot paused"></div>GAROTA CERTA</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  Relatório gerado por <strong style="color:var(--text)">Caribe Tráfego</strong> &nbsp;·&nbsp; 23/05/2026 &nbsp;·&nbsp; Dados extraídos diretamente do Meta Ads Manager
+</div>
 
 <script>
-  const fmt = (n, dec) => n.toLocaleString('pt-BR', {
-    minimumFractionDigits: dec || 0,
-    maximumFractionDigits: dec || 0
-  });
-
-  // --- Donut ---
-  new Chart(document.getElementById('chartDonut').getContext('2d'), {
-    type: 'doughnut',
-    data: {
-      labels: ['Reações', 'Cliques no Link', 'Salvamentos', 'Outras Ações'],
-      datasets: [{
-        data: [31228, 56951, 1497, 294209],
-        backgroundColor: ['#0EA5E9','#38BDF8','#7DD3FC','#BAE6FD'],
-        borderWidth: 2,
-        borderColor: '#fff',
-        hoverOffset: 10
-      }]
+Chart.defaults.color='#8896B0';
+Chart.defaults.font.family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif";
+Chart.defaults.font.size=10;
+new Chart(document.getElementById('lineChart'),{
+  type:'line',
+  data:{
+    labels:["Mai 2026"],
+    datasets:[
+      {label:'Cliques',data:[59341],borderColor:'#0EA5E9',backgroundColor:'#0EA5E922',tension:.4,fill:true,pointRadius:5},
+      {label:'Impressões',data:[835947],borderColor:'#4FC3F7',backgroundColor:'#4FC3F722',tension:.4,fill:true,pointRadius:5,yAxisID:'y2'}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'top',labels:{boxWidth:10,padding:12,color:'#8896B0'}},
+      tooltip:{mode:'index',intersect:false,callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.raw.toLocaleString('pt-BR')}`}}
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      cutout: '65%',
-      plugins: {
-        legend: {
-          position: 'bottom',
-          labels: { font: { size: 11 }, padding: 10, usePointStyle: true, pointStyleWidth: 8 }
-        },
-        tooltip: {
-          callbacks: {
-            label: ctx => '  ' + ctx.label + ': ' + fmt(ctx.raw)
-          }
-        }
-      }
+    scales:{
+      x:{grid:{color:'#252D45'},ticks:{color:'#8896B0'}},
+      y:{grid:{color:'#252D45'},ticks:{color:'#8896B0',callback:v=>v.toLocaleString('pt-BR')}},
+      y2:{position:'right',grid:{drawOnChartArea:false},ticks:{color:'#4FC3F7',callback:v=>v.toLocaleString('pt-BR')}}
     }
-  });
-
-  // --- Bar ---
-  new Chart(document.getElementById('chartBar').getContext('2d'), {
-    type: 'bar',
-    data: {
-      labels: ['Impressões', 'Alcance', 'Cliques Totais', 'Cliques no Link', 'Engajamento'],
-      datasets: [{
-        label: 'Maio 2026',
-        data: [835947, 436533, 59341, 56951, 383885],
-        backgroundColor: ['#0EA5E9','#38BDF8','#0EA5E9','#38BDF8','#0EA5E9'],
-        borderRadius: 7,
-        borderSkipped: false
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: ctx => '  ' + ctx.dataset.label + ': ' + fmt(ctx.raw)
-          }
-        }
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: { font: { size: 10 }, callback: v => v >= 1000 ? (v/1000).toFixed(0)+'k' : v },
-          grid: { color: '#EBF5FB' }
-        },
-        x: { ticks: { font: { size: 10 } }, grid: { display: false } }
-      }
-    }
-  });
-
-  // --- Tabela ---
-  const metricas = [
-    { nome: 'Impressões',           val: 835947, tipo: 'num' },
-    { nome: 'Alcance',              val: 436533, tipo: 'num' },
-    { nome: 'Cliques Totais',       val: 59341,  tipo: 'num' },
-    { nome: 'Cliques no Link',      val: 56951,  tipo: 'num' },
-    { nome: 'Cliques Únicos',       val: 46845,  tipo: 'num' },
-    { nome: 'CTR',                  val: 7.10,   tipo: 'pct' },
-    { nome: 'CPC',                  val: 0.088,  tipo: 'brl' },
-    { nome: 'CPM',                  val: 6.24,   tipo: 'brl' },
-    { nome: 'Engajamento Total',    val: 383885, tipo: 'num' },
-    { nome: 'Reações',              val: 31228,  tipo: 'num' },
-    { nome: 'Salvamentos',          val: 1497,   tipo: 'num' },
-    { nome: 'Landing Page Views',   val: 16845,  tipo: 'num' },
-    { nome: 'Visualiz. de Vídeo',   val: 292921, tipo: 'num' },
-  ];
-
-  const maxNum = Math.max(...metricas.filter(m => m.tipo === 'num').map(m => m.val));
-
-  function fmtVal(m) {
-    if (m.tipo === 'pct') return fmt(m.val, 2) + '%';
-    if (m.tipo === 'brl') return 'R$ ' + fmt(m.val, 3);
-    return fmt(m.val);
   }
-  function barra(m) {
-    if (m.tipo !== 'num') return 28;
-    return Math.max(3, Math.round((m.val / maxNum) * 100));
-  }
-
-  const el = document.getElementById('tabela-metricas');
-  metricas.forEach(m => {
-    el.innerHTML += `
-      <div class="metric-row">
-        <div class="metric-name">${m.nome}</div>
-        <div class="metric-val">${fmtVal(m)}</div>
-        <div class="metric-bar-wrap"><div class="metric-bar" style="width:${barra(m)}%"></div></div>
-      </div>`;
-  });
+});
 </script>
 </body>
 </html>

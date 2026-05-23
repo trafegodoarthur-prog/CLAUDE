@@ -1,589 +1,210 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Relatório de Campanha – Mari Cobucci</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
-  <style>
-    :root {
-      --cor: #EC4899;
-      --cor-light: #FCE7F3;
-      --cor-mid: #F472B6;
-      --cor-dark: #BE185D;
-      --bg: #FFF7FB;
-      --card-bg: #FFFFFF;
-      --text: #3B0764;
-      --text-muted: #6B7280;
-      --border: #F3E8EE;
-      --warning-bg: #FFFBEB;
-      --warning-border: #F59E0B;
-      --radius: 14px;
-      --shadow: 0 2px 12px rgba(236,72,153,0.09);
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
-    }
-
-    /* HEADER */
-    .header {
-      background: linear-gradient(135deg, var(--cor-dark) 0%, var(--cor) 60%, var(--cor-mid) 100%);
-      color: #fff;
-      padding: 32px 20px 36px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-    .header::before {
-      content: '';
-      position: absolute;
-      top: -50px; right: -50px;
-      width: 200px; height: 200px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.07);
-      pointer-events: none;
-    }
-    .header::after {
-      content: '';
-      position: absolute;
-      bottom: -60px; left: -40px;
-      width: 240px; height: 240px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.05);
-      pointer-events: none;
-    }
-    .header-badge {
-      display: inline-block;
-      background: rgba(255,255,255,0.2);
-      border: 1px solid rgba(255,255,255,0.35);
-      border-radius: 999px;
-      padding: 4px 16px;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      margin-bottom: 14px;
-    }
-    .header h1 {
-      font-size: clamp(26px, 7vw, 42px);
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      margin-bottom: 6px;
-    }
-    .header .subtitle {
-      font-size: 14px;
-      opacity: 0.85;
-      margin-bottom: 16px;
-    }
-    .header .updated {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(255,255,255,0.18);
-      border-radius: 999px;
-      padding: 6px 16px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-
-    /* CONTAINER */
-    .container {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 24px 16px 48px;
-    }
-
-    /* AVISO */
-    .aviso {
-      background: var(--warning-bg);
-      border: 1px solid var(--warning-border);
-      border-left: 4px solid var(--warning-border);
-      border-radius: var(--radius);
-      padding: 14px 18px;
-      margin-bottom: 28px;
-      font-size: 13px;
-      color: #92400E;
-    }
-    .aviso strong { display: block; margin-bottom: 4px; font-size: 13.5px; }
-
-    /* SECTION TITLE */
-    .section-title {
-      font-size: 12px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1.2px;
-      color: var(--cor);
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .section-title::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--cor-light);
-    }
-
-    /* KPI GRID */
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-bottom: 32px;
-    }
-    @media (min-width: 600px) {
-      .kpi-grid { grid-template-columns: repeat(3, 1fr); }
-    }
-    .kpi-card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      padding: 18px 14px 16px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.18s ease, box-shadow 0.18s ease;
-    }
-    .kpi-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 24px rgba(236,72,153,0.15);
-    }
-    .kpi-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--cor-dark), var(--cor), var(--cor-mid));
-    }
-    .kpi-icon { font-size: 24px; margin-bottom: 10px; display: block; }
-    .kpi-label {
-      font-size: 10.5px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      color: var(--text-muted);
-      margin-bottom: 5px;
-    }
-    .kpi-value {
-      font-size: clamp(20px, 5.5vw, 30px);
-      font-weight: 800;
-      color: var(--cor);
-      line-height: 1.1;
-      margin-bottom: 5px;
-    }
-    .kpi-sub { font-size: 11px; color: var(--text-muted); line-height: 1.35; }
-
-    /* MES BADGES */
-    .mes-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 32px;
-    }
-    .mes-card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      padding: 18px 16px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-      border-top: 3px solid var(--cor);
-    }
-    .mes-card h3 {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--cor);
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .mes-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      padding: 5px 0;
-      border-bottom: 1px solid #F9F0F5;
-      font-size: 12.5px;
-    }
-    .mes-item:last-child { border-bottom: none; }
-    .mes-item .mi-label { color: var(--text-muted); }
-    .mes-item .mi-val { font-weight: 700; color: var(--text); }
-
-    /* CHARTS GRID */
-    .charts-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-      margin-bottom: 32px;
-    }
-    @media (min-width: 640px) {
-      .charts-grid { grid-template-columns: 1fr 1fr; }
-    }
-    .chart-card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      padding: 20px 16px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-    }
-    .chart-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 18px;
-    }
-    .chart-wrap { position: relative; height: 240px; }
-
-    /* TABELA */
-    .table-card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      padding: 20px 16px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-      margin-bottom: 32px;
-    }
-    .metric-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 11px 0;
-      border-bottom: 1px solid #F9F0F5;
-    }
-    .metric-row:last-child { border-bottom: none; }
-    .metric-name {
-      flex: 0 0 155px;
-      font-size: 13px;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
-    .metric-val {
-      flex: 0 0 95px;
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--text);
-      text-align: right;
-    }
-    .metric-bar-wrap {
-      flex: 1;
-      height: 8px;
-      background: var(--cor-light);
-      border-radius: 999px;
-      overflow: hidden;
-      min-width: 40px;
-    }
-    .metric-bar {
-      height: 100%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--cor-dark), var(--cor-mid));
-    }
-
-    /* INFO GRID */
-    .info-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 32px;
-    }
-    .info-card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      padding: 24px 16px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-      text-align: center;
-    }
-    .info-card .ico { font-size: 36px; margin-bottom: 10px; }
-    .info-card .info-val {
-      font-size: clamp(28px, 8vw, 42px);
-      font-weight: 800;
-      color: var(--cor);
-      line-height: 1;
-      margin-bottom: 6px;
-    }
-    .info-card .info-label {
-      font-size: 11.5px;
-      color: var(--text-muted);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    /* FOOTER */
-    footer {
-      text-align: center;
-      padding: 28px 16px;
-      font-size: 12px;
-      color: var(--text-muted);
-      border-top: 1px solid var(--border);
-    }
-    footer strong { color: var(--cor); }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatório Meta Ads | Mari Cobucci</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0B0F1E;--card:#141827;--card2:#1A2138;--border:#252D45;--text:#E2E8F0;--muted:#8896B0;--accent:#EC4899;--accent2:#BE185D;--green:#10B981;--orange:#F59E0B}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text)}
+.hdr{background:var(--card);border-bottom:1px solid var(--border);padding:.75rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.hdr-logo{display:flex;align-items:center;gap:.5rem;font-weight:700;font-size:.95rem;color:var(--accent)}
+.hdr-div{width:1px;height:24px;background:var(--border)}
+.hdr-title{font-size:.82rem;color:var(--muted)}
+.hdr-title strong{color:var(--text)}
+.hdr-badge{margin-left:auto;background:var(--card2);border:1px solid var(--border);padding:.25rem .75rem;border-radius:20px;font-size:.72rem;color:var(--muted)}
+.kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);background:var(--border);gap:1px;border-bottom:1px solid var(--border)}
+.kpi{background:var(--card);padding:1.1rem 1.3rem}
+.kpi-label{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem}
+.kpi-val{font-size:1.75rem;font-weight:700;line-height:1}
+.kpi-sub{font-size:.65rem;color:var(--muted);margin-top:.2rem}
+.kpi.hl .kpi-val{color:var(--accent)}
+.main{display:grid;grid-template-columns:260px 1fr 260px;gap:1px;background:var(--border)}
+.panel{background:var(--card);padding:1.25rem}
+.sec-title{font-size:.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1rem}
+.funnel{display:flex;flex-direction:column;align-items:center;gap:2px;margin-bottom:1rem}
+.f-row{display:flex;align-items:center;justify-content:space-between;padding:.55rem .9rem;border-radius:3px}
+.f-label{font-size:.65rem;color:rgba(255,255,255,.7)}
+.f-val{font-size:1rem;font-weight:700;color:#fff}
+.f-meta{display:grid;grid-template-columns:1fr 1fr;gap:.4rem}
+.fm{background:var(--card2);border-radius:6px;padding:.5rem .6rem;text-align:center}
+.fm-l{font-size:.6rem;color:var(--muted);margin-bottom:.1rem}
+.fm-v{font-size:.85rem;font-weight:600;color:var(--text)}
+.cost-row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1rem}
+.cost-card{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:.85rem}
+.cost-card .cl{font-size:.62rem;color:var(--muted);margin-bottom:.25rem}
+.cost-card .cv{font-size:1.3rem;font-weight:700;color:var(--accent)}
+.chart-box{position:relative;height:170px}
+.m-bars{display:flex;flex-direction:column;gap:.7rem}
+.mb-row .mb-top{display:flex;justify-content:space-between;margin-bottom:.25rem}
+.mb-name{font-size:.72rem;color:var(--muted)}
+.mb-val{font-size:.72rem;font-weight:600;color:var(--text)}
+.mb-track{height:5px;background:var(--card2);border-radius:3px}
+.mb-fill{height:5px;border-radius:3px}
+.mc{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:.85rem}
+.mc-hdr{font-size:.7rem;font-weight:700;color:var(--accent);margin-bottom:.6rem;padding-bottom:.4rem;border-bottom:1px solid var(--border)}
+.mc-row{display:flex;justify-content:space-between;padding:.2rem 0;font-size:.7rem}
+.mk{color:var(--muted)}.mv{font-weight:600;color:var(--text)}
+.tbl-section{background:var(--card);margin-top:1px;padding:1.25rem}
+.camps-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.camp-group h4{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem}
+.camp-item{display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:var(--card2);border-radius:6px;margin-bottom:.3rem;font-size:.73rem}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dot.active{background:var(--green)}.dot.paused{background:var(--muted)}
+.bench{width:100%;border-collapse:collapse;font-size:.75rem;margin-top:.5rem}
+.bench th{text-align:left;padding:.4rem .6rem;color:var(--muted);font-size:.62rem;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border)}
+.bench td{padding:.55rem .6rem;border-bottom:1px solid rgba(37,45,69,.5)}
+.bench tr:hover td{background:var(--card2)}
+.tag{display:inline-block;padding:.1rem .5rem;border-radius:20px;font-size:.65rem;font-weight:600}
+.tag.green{background:rgba(16,185,129,.15);color:#10B981}
+.tag.blue{background:rgba(79,195,247,.15);color:#4FC3F7}
+.foll-card{background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;padding:1rem;text-align:center;margin-top:1rem}
+.foll-num{font-size:2.2rem;font-weight:700}
+.foll-label{font-size:.72rem;opacity:.8;margin-top:.2rem}
+.foll-page{font-size:.65rem;opacity:.65;margin-top:.1rem}
+.footer{text-align:center;padding:1rem;color:var(--muted);font-size:.68rem;border-top:1px solid var(--border)}
+@media(max-width:960px){.main{grid-template-columns:1fr}.kpi-strip{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){.kpi-strip{grid-template-columns:repeat(2,1fr)}.kpi-val{font-size:1.4rem}.camps-grid{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 
-<div class="header">
-  <div class="header-badge">📈 Relatório de Performance · Meta Ads</div>
-  <h1>Mari Cobucci</h1>
-  <p class="subtitle">Abril 2026 + Maio 2026 (até 22/05) · Comparativo de 2 meses</p>
-  <span class="updated">🟢 Dados atualizados em 23/05/2026</span>
+<div class="hdr">
+  <div class="hdr-logo">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+    Meta Ads
+  </div>
+  <div class="hdr-div"></div>
+  <div class="hdr-title">Relatório de Performance — <strong>Mari Cobucci</strong></div>
+  <div class="hdr-badge">📅 23/04/2026 – 22/05/2026</div>
 </div>
 
-<div class="container">
-
-  <div class="aviso">
-    <strong>⚠️ Sobre o período exibido</strong>
-    Os dados exibidos correspondem aos meses de abril e maio de 2026 (maio até o dia 22). Este dashboard apresenta a evolução comparativa entre os dois meses. Meses anteriores serão incluídos conforme o histórico for sincronizado.
-  </div>
-
-  <!-- KPIs TOTAIS -->
-  <div class="section-title">Indicadores Totais (Dois Meses)</div>
-  <div class="kpi-grid">
-    <div class="kpi-card">
-      <span class="kpi-icon">💰</span>
-      <div class="kpi-label">Investimento Total</div>
-      <div class="kpi-value">R$&nbsp;1.635,95</div>
-      <div class="kpi-sub">Abr + Maio somados</div>
-    </div>
-    <div class="kpi-card">
-      <span class="kpi-icon">👆</span>
-      <div class="kpi-label">Cliques no Link</div>
-      <div class="kpi-value">29.197</div>
-      <div class="kpi-sub">6.454 em abril + 22.743 em maio</div>
-    </div>
-    <div class="kpi-card">
-      <span class="kpi-icon">📊</span>
-      <div class="kpi-label">CTR Médio</div>
-      <div class="kpi-value">8,13%</div>
-      <div class="kpi-sub">A cada 100 visualiz., ~8 clicaram</div>
-    </div>
-    <div class="kpi-card">
-      <span class="kpi-icon">💵</span>
-      <div class="kpi-label">CPC Médio</div>
-      <div class="kpi-value">R$&nbsp;0,058</div>
-      <div class="kpi-sub">Custo médio por clique no link</div>
-    </div>
-    <div class="kpi-card">
-      <span class="kpi-icon">👥</span>
-      <div class="kpi-label">Alcance Total</div>
-      <div class="kpi-value">216.540</div>
-      <div class="kpi-sub">Pessoas únicas impactadas</div>
-    </div>
-    <div class="kpi-card">
-      <span class="kpi-icon">❤️</span>
-      <div class="kpi-label">Engajamento Total</div>
-      <div class="kpi-value">172.331</div>
-      <div class="kpi-sub">38.368 em abril + 133.963 em maio</div>
-    </div>
-  </div>
-
-  <!-- COMPARATIVO MENSAL -->
-  <div class="section-title">Comparativo Mensal Detalhado</div>
-  <div class="mes-grid">
-    <div class="mes-card">
-      <h3>📅 Abril 2026</h3>
-      <div class="mes-item"><span class="mi-label">Investimento</span><span class="mi-val">R$ 354,45</span></div>
-      <div class="mes-item"><span class="mi-label">Impressões</span><span class="mi-val">74.414</span></div>
-      <div class="mes-item"><span class="mi-label">Alcance</span><span class="mi-val">52.505</span></div>
-      <div class="mes-item"><span class="mi-label">Cliques Totais</span><span class="mi-val">6.365</span></div>
-      <div class="mes-item"><span class="mi-label">Cliques no Link</span><span class="mi-val">6.454</span></div>
-      <div class="mes-item"><span class="mi-label">CTR</span><span class="mi-val">8,55%</span></div>
-      <div class="mes-item"><span class="mi-label">CPC</span><span class="mi-val">R$ 0,056</span></div>
-      <div class="mes-item"><span class="mi-label">CPM</span><span class="mi-val">R$ 4,76</span></div>
-      <div class="mes-item"><span class="mi-label">Engajamento</span><span class="mi-val">38.368</span></div>
-    </div>
-    <div class="mes-card">
-      <h3>📅 Maio 2026</h3>
-      <div class="mes-item"><span class="mi-label">Investimento</span><span class="mi-val">R$ 1.281,50</span></div>
-      <div class="mes-item"><span class="mi-label">Impressões</span><span class="mi-val">270.107</span></div>
-      <div class="mes-item"><span class="mi-label">Alcance</span><span class="mi-val">164.035</span></div>
-      <div class="mes-item"><span class="mi-label">Cliques Totais</span><span class="mi-val">21.956</span></div>
-      <div class="mes-item"><span class="mi-label">Cliques no Link</span><span class="mi-val">22.743</span></div>
-      <div class="mes-item"><span class="mi-label">CTR</span><span class="mi-val">8,13%</span></div>
-      <div class="mes-item"><span class="mi-label">CPC</span><span class="mi-val">R$ 0,058</span></div>
-      <div class="mes-item"><span class="mi-label">CPM</span><span class="mi-val">R$ 4,74</span></div>
-      <div class="mes-item"><span class="mi-label">Engajamento</span><span class="mi-val">133.963</span></div>
-    </div>
-  </div>
-
-  <!-- GRÁFICOS -->
-  <div class="section-title">Gráficos</div>
-  <div class="charts-grid">
-    <div class="chart-card">
-      <div class="chart-title">📊 Comparativo Abril × Maio</div>
-      <div class="chart-wrap">
-        <canvas id="chartBar"></canvas>
-      </div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title">🍩 Distribuição de Ações – Maio</div>
-      <div class="chart-wrap">
-        <canvas id="chartDonut"></canvas>
-      </div>
-    </div>
-  </div>
-
-  <!-- TABELA DETALHADA -->
-  <div class="section-title">Detalhamento Completo – Maio 2026</div>
-  <div class="table-card">
-    <div id="tabela-metricas"></div>
-  </div>
-
-  <!-- SEGUIDORES + VÍDEO -->
-  <div class="section-title">Crescimento e Vídeo</div>
-  <div class="info-grid">
-    <div class="info-card">
-      <div class="ico">📣</div>
-      <div class="info-val">27</div>
-      <div class="info-label">Novos Seguidores da Página</div>
-    </div>
-    <div class="info-card">
-      <div class="ico">▶️</div>
-      <div class="info-val">106.052</div>
-      <div class="info-label">Visualizações de Vídeo – Maio</div>
-    </div>
-  </div>
-
+<div class="kpi-strip">
+  <div class="kpi"><div class="kpi-label">Investimento</div><div class="kpi-val" style="font-size:1.3rem">R$ 1.635,95</div><div class="kpi-sub">total no período</div></div>
+  <div class="kpi hl"><div class="kpi-label">CTR</div><div class="kpi-val">8.34%</div><div class="kpi-sub">taxa de cliques</div></div>
+  <div class="kpi"><div class="kpi-label">Cliques</div><div class="kpi-val">28.321</div><div class="kpi-sub">cliques totais</div></div>
+  <div class="kpi"><div class="kpi-label">Impressões</div><div class="kpi-val">344.521</div><div class="kpi-sub">exibições</div></div>
+  <div class="kpi"><div class="kpi-label">Alcance</div><div class="kpi-val">216.540</div><div class="kpi-sub">pessoas únicas</div></div>
 </div>
 
-<footer>
-  Relatório gerado por <strong>Caribe Tráfego</strong> · 23/05/2026 · Dados extraídos diretamente do Meta Ads Manager
-</footer>
+<div class="main">
+  <div class="panel">
+    <div class="sec-title">Funil de Tráfego</div>
+    <div class="funnel"><div class="f-row" style="width:100%;background:linear-gradient(135deg,#EC4899,#BE185D)"><span class="f-label">Impressões</span><span class="f-val">344.521</span></div>
+<div class="f-row" style="width:83%;background:linear-gradient(135deg,#BE185D,#1E3A8A)"><span class="f-label">Alcance</span><span class="f-val">216.540</span></div>
+<div class="f-row" style="width:63%;background:linear-gradient(135deg,#1E3A8A,#1E40AF)"><span class="f-label">Cliques</span><span class="f-val">28.321</span></div>
+<div class="f-row" style="width:44%;background:linear-gradient(135deg,#172554,#1E3A8A)"><span class="f-label">Pages Views</span><span class="f-val">2.628</span></div>
+</div>
+    <div class="f-meta">
+      <div class="fm"><div class="fm-l">CTR</div><div class="fm-v">8.34%</div></div>
+      <div class="fm"><div class="fm-l">Frequência</div><div class="fm-v">1.59</div></div>
+      <div class="fm"><div class="fm-l">CPM</div><div class="fm-v">R$ 4,75</div></div>
+      <div class="fm"><div class="fm-l">CPC</div><div class="fm-v">R$ 0,06</div></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="cost-row">
+      <div class="cost-card"><div class="cl">Custo por Page View</div><div class="cv">R$ 0,62</div></div>
+      <div class="cost-card"><div class="cl">Custo por Clique</div><div class="cv">R$ 0,06</div></div>
+    </div>
+    <div class="sec-title">Evolução — Cliques &amp; Impressões</div>
+    <div class="chart-box"><canvas id="lineChart"></canvas></div><div style="margin-top:1rem"><div class="sec-title" style="margin-top:.5rem">Comparativo Mensal</div><div style="display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem">
+        <div class="mc">
+          <div class="mc-hdr">Abr 2026</div>
+          <div class="mc-row"><span class="mk">Investimento</span><span class="mv">R$ 354,45</span></div>
+          <div class="mc-row"><span class="mk">Impressões</span><span class="mv">74.414</span></div>
+          <div class="mc-row"><span class="mk">Alcance</span><span class="mv">52.505</span></div>
+          <div class="mc-row"><span class="mk">Cliques</span><span class="mv">6.365</span></div>
+          <div class="mc-row"><span class="mk">CTR</span><span class="mv">8.55%</span></div>
+          <div class="mc-row"><span class="mk">CPC</span><span class="mv">R$ 0,06</span></div>
+        </div>
+        <div class="mc">
+          <div class="mc-hdr">Mai 2026</div>
+          <div class="mc-row"><span class="mk">Investimento</span><span class="mv">R$ 1.281,50</span></div>
+          <div class="mc-row"><span class="mk">Impressões</span><span class="mv">270.107</span></div>
+          <div class="mc-row"><span class="mk">Alcance</span><span class="mv">164.035</span></div>
+          <div class="mc-row"><span class="mk">Cliques</span><span class="mv">21.956</span></div>
+          <div class="mc-row"><span class="mk">CTR</span><span class="mv">8.13%</span></div>
+          <div class="mc-row"><span class="mk">CPC</span><span class="mv">R$ 0,06</span></div>
+        </div></div></div>
+  </div>
+
+  <div class="panel">
+    <div class="sec-title">Distribuição de Ações</div>
+    <div class="m-bars"><div class="mb-row"><div class="mb-top"><span class="mb-name">Cliques no Link</span><span class="mb-val">29.197</span></div><div class="mb-track"><div class="mb-fill" style="width:16.9%;background:#3B82F6"></div></div></div>
+<div class="mb-row"><div class="mb-top"><span class="mb-name">Reações</span><span class="mb-val">4.090</span></div><div class="mb-track"><div class="mb-fill" style="width:2.4%;background:#EC4899"></div></div></div>
+<div class="mb-row"><div class="mb-top"><span class="mb-name">Visualizações de Vídeo</span><span class="mb-val">106.052</span></div><div class="mb-track"><div class="mb-fill" style="width:61.5%;background:#10B981"></div></div></div>
+<div class="mb-row"><div class="mb-top"><span class="mb-name">Engajamento Total</span><span class="mb-val">172.331</span></div><div class="mb-track"><div class="mb-fill" style="width:100.0%;background:#F59E0B"></div></div></div>
+<div class="mb-row"><div class="mb-top"><span class="mb-name">Landing Page Views</span><span class="mb-val">2.628</span></div><div class="mb-track"><div class="mb-fill" style="width:1.5%;background:#8B5CF6"></div></div></div>
+<div class="mb-row"><div class="mb-top"><span class="mb-name">Salvamentos</span><span class="mb-val">0</span></div><div class="mb-track"><div class="mb-fill" style="width:0.0%;background:#06B6D4"></div></div></div>
+</div>
+    <div class="foll-card">
+      <div class="foll-num">27</div>
+      <div class="foll-label">Seguidores na Página</div>
+      <div class="foll-page">Mari Cobucci Autora</div>
+    </div>
+  </div>
+</div>
+
+<div class="tbl-section">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+    <div>
+      <div class="sec-title">Avaliação de Performance</div>
+      <table class="bench">
+        <thead><tr><th>Métrica</th><th>Valor</th><th>Benchmark</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>CTR</td><td>8.34%</td><td>> 1%</td><td><span class="tag green">Excelente 🏆</span></td></tr>
+          <tr><td>CPC</td><td>R$ 0,06</td><td>&lt; R$ 0,50</td><td><span class="tag green">Excelente 🏆</span></td></tr>
+          <tr><td>CPM</td><td>R$ 4,75</td><td>R$ 5–15</td><td><span class="tag green">Excelente 🏆</span></td></tr>
+          <tr><td>Engajamento</td><td>50.0%</td><td>> 1%</td><td><span class="tag green">Excelente 🏆</span></td></tr>
+          <tr><td>Cliques no Link</td><td>29.197</td><td>—</td><td><span class="tag blue">Registrado</span></td></tr>
+          <tr><td>Landing Page Views</td><td>2.628</td><td>—</td><td><span class="tag blue">Registrado</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div class="sec-title">Campanhas</div>
+      <div class="camps-grid">
+        <div class="camp-group"><h4>Ativas</h4><div class="camp-item"><div class="dot active"></div>[TRAF/PERFIL] - PRE/OQVSTDDM</div><div class="camp-item"><div class="dot active"></div>[VENDA/REMARKETING] - OQMTDDV</div></div>
+        <div class="camp-group"><h4>Pausadas</h4><div class="camp-item"><div class="dot paused"></div>[TRAF/PERFIL] - PRE/OQVSTDDM — Cópia</div><div class="camp-item"><div class="dot paused"></div>[TRAF/ACESS] - CAMP 2</div><div class="camp-item"><div class="dot paused"></div>[TRF/LANÇAMENTO]</div><div class="camp-item"><div class="dot paused"></div>[TRAFEGO][ACESSO] - CAMP 1</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  Relatório gerado por <strong style="color:var(--text)">Caribe Tráfego</strong> &nbsp;·&nbsp; 23/05/2026 &nbsp;·&nbsp; Dados extraídos diretamente do Meta Ads Manager
+</div>
 
 <script>
-  const fmt = (n, dec) => n.toLocaleString('pt-BR', {
-    minimumFractionDigits: dec || 0,
-    maximumFractionDigits: dec || 0
-  });
-
-  const COR      = '#EC4899';
-  const COR_ABR  = '#FBCFE8';
-  const COR_ABRD = '#DB2777';
-
-  // --- Bar Comparativo ---
-  new Chart(document.getElementById('chartBar').getContext('2d'), {
-    type: 'bar',
-    data: {
-      labels: ['Investimento\n(R$)', 'Alcance', 'Cliques\nno Link', 'Engajamento'],
-      datasets: [
-        {
-          label: 'Abril 2026',
-          data: [354.45, 52505, 6454, 38368],
-          backgroundColor: COR_ABR,
-          borderColor: COR_ABRD,
-          borderWidth: 1.5,
-          borderRadius: 6,
-          borderSkipped: false
-        },
-        {
-          label: 'Maio 2026',
-          data: [1281.50, 164035, 22743, 133963],
-          backgroundColor: COR,
-          borderRadius: 6,
-          borderSkipped: false
-        }
-      ]
+Chart.defaults.color='#8896B0';
+Chart.defaults.font.family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif";
+Chart.defaults.font.size=10;
+new Chart(document.getElementById('lineChart'),{
+  type:'line',
+  data:{
+    labels:["Abr 2026", "Mai 2026"],
+    datasets:[
+      {label:'Cliques',data:[6365, 21956],borderColor:'#EC4899',backgroundColor:'#EC489922',tension:.4,fill:true,pointRadius:5},
+      {label:'Impressões',data:[74414, 270107],borderColor:'#4FC3F7',backgroundColor:'#4FC3F722',tension:.4,fill:true,pointRadius:5,yAxisID:'y2'}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'top',labels:{boxWidth:10,padding:12,color:'#8896B0'}},
+      tooltip:{mode:'index',intersect:false,callbacks:{label:ctx=>` ${ctx.dataset.label}: ${ctx.raw.toLocaleString('pt-BR')}`}}
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: 'bottom',
-          labels: { font: { size: 11 }, padding: 12, usePointStyle: true, pointStyleWidth: 8 }
-        },
-        tooltip: {
-          callbacks: {
-            label: ctx => {
-              const v = ctx.raw;
-              if (ctx.dataIndex === 0) return '  ' + ctx.dataset.label + ': R$ ' + fmt(v, 2);
-              return '  ' + ctx.dataset.label + ': ' + fmt(v);
-            }
-          }
-        }
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: { font: { size: 10 }, callback: v => v >= 1000 ? (v/1000).toFixed(0)+'k' : v },
-          grid: { color: '#F9F0F5' }
-        },
-        x: { ticks: { font: { size: 10 } }, grid: { display: false } }
-      }
+    scales:{
+      x:{grid:{color:'#252D45'},ticks:{color:'#8896B0'}},
+      y:{grid:{color:'#252D45'},ticks:{color:'#8896B0',callback:v=>v.toLocaleString('pt-BR')}},
+      y2:{position:'right',grid:{drawOnChartArea:false},ticks:{color:'#4FC3F7',callback:v=>v.toLocaleString('pt-BR')}}
     }
-  });
-
-  // --- Donut Maio ---
-  new Chart(document.getElementById('chartDonut').getContext('2d'), {
-    type: 'doughnut',
-    data: {
-      labels: ['Reações', 'Cliques no Link', 'Land. Page Views', 'Outras Ações'],
-      datasets: [{
-        data: [4090, 22743, 2628, 104502],
-        backgroundColor: ['#EC4899','#F472B6','#FBCFE8','#FCE7F3'],
-        borderWidth: 2,
-        borderColor: '#fff',
-        hoverOffset: 10
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      cutout: '65%',
-      plugins: {
-        legend: {
-          position: 'bottom',
-          labels: { font: { size: 11 }, padding: 10, usePointStyle: true, pointStyleWidth: 8 }
-        },
-        tooltip: {
-          callbacks: {
-            label: ctx => '  ' + ctx.label + ': ' + fmt(ctx.raw)
-          }
-        }
-      }
-    }
-  });
-
-  // --- Tabela ---
-  const metricas = [
-    { nome: 'Impressões',           val: 270107, tipo: 'num' },
-    { nome: 'Alcance',              val: 164035, tipo: 'num' },
-    { nome: 'Cliques Totais',       val: 21956,  tipo: 'num' },
-    { nome: 'Cliques no Link',      val: 22743,  tipo: 'num' },
-    { nome: 'CTR',                  val: 8.13,   tipo: 'pct' },
-    { nome: 'CPC',                  val: 0.058,  tipo: 'brl' },
-    { nome: 'CPM',                  val: 4.74,   tipo: 'brl' },
-    { nome: 'Engajamento Total',    val: 133963, tipo: 'num' },
-    { nome: 'Reações',              val: 4090,   tipo: 'num' },
-    { nome: 'Landing Page Views',   val: 2628,   tipo: 'num' },
-    { nome: 'Visualiz. de Vídeo',   val: 106052, tipo: 'num' },
-  ];
-
-  const maxNum = Math.max(...metricas.filter(m => m.tipo === 'num').map(m => m.val));
-
-  function fmtVal(m) {
-    if (m.tipo === 'pct') return fmt(m.val, 2) + '%';
-    if (m.tipo === 'brl') return 'R$ ' + fmt(m.val, 3);
-    return fmt(m.val);
   }
-  function barra(m) {
-    if (m.tipo !== 'num') return 28;
-    return Math.max(3, Math.round((m.val / maxNum) * 100));
-  }
-
-  const el = document.getElementById('tabela-metricas');
-  metricas.forEach(m => {
-    el.innerHTML += `
-      <div class="metric-row">
-        <div class="metric-name">${m.nome}</div>
-        <div class="metric-val">${fmtVal(m)}</div>
-        <div class="metric-bar-wrap"><div class="metric-bar" style="width:${barra(m)}%"></div></div>
-      </div>`;
-  });
+});
 </script>
 </body>
 </html>
