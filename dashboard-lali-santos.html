@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Lali Santos · Meta Ads</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --brand: #7C3AED;
+      --brand-light: #EDE9FE;
+      --brand-mid: #A78BFA;
+      --brand-dark: #5B21B6;
+      --bg: #F8F7FF;
+      --surface: #FFFFFF;
+      --border: #E5E7EB;
+      --text: #111827;
+      --muted: #6B7280;
+      --warning-bg: #FFFBEB;
+      --warning-border: #FCD34D;
+      --warning-text: #92400E;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+      --shadow-md: 0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.06);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ─────────────────────────────────────────── */
+    .header {
+      background: linear-gradient(135deg, var(--brand-dark) 0%, var(--brand) 50%, var(--brand-mid) 100%);
+      color: #fff;
+      padding: 2rem 1.25rem 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 220px; height: 220px;
+      background: rgba(255,255,255,.07);
+      border-radius: 50%;
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -40px; left: -40px;
+      width: 160px; height: 160px;
+      background: rgba(255,255,255,.05);
+      border-radius: 50%;
+    }
+    .header-inner { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; }
+    .header-badge {
+      display: inline-flex; align-items: center; gap: .4rem;
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: 99px;
+      font-size: .75rem; font-weight: 600;
+      padding: .3rem .85rem;
+      margin-bottom: 1rem;
+      letter-spacing: .02em;
+    }
+    .header-badge::before { content: '●'; font-size: .55rem; color: #86EFAC; }
+    h1 { font-size: 2rem; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; }
+    .header-subtitle { margin-top: .45rem; font-size: .95rem; opacity: .85; }
+    .header-period {
+      margin-top: 1rem;
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: rgba(255,255,255,.15);
+      border-radius: 8px;
+      padding: .4rem .9rem;
+      font-size: .85rem; font-weight: 500;
+    }
+
+    /* ── MAIN CONTENT ────────────────────────────────────── */
+    .main { max-width: 960px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+
+    /* ── AVISO ───────────────────────────────────────────── */
+    .notice {
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      border-radius: var(--radius);
+      padding: 1rem 1.2rem;
+      font-size: .875rem;
+      color: var(--warning-text);
+      line-height: 1.6;
+      margin-bottom: 1.75rem;
+      display: flex; gap: .75rem; align-items: flex-start;
+    }
+    .notice-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: .05rem; }
+
+    /* ── SECTION TITLE ───────────────────────────────────── */
+    .section-title {
+      font-size: 1rem; font-weight: 700;
+      color: var(--brand-dark);
+      margin-bottom: 1rem;
+      display: flex; align-items: center; gap: .5rem;
+      letter-spacing: -.01em;
+    }
+    .section-title::before {
+      content: '';
+      display: inline-block;
+      width: 4px; height: 18px;
+      background: var(--brand);
+      border-radius: 2px;
+    }
+
+    /* ── KPI GRID ────────────────────────────────────────── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: .875rem;
+      margin-bottom: 2rem;
+    }
+    @media(min-width: 600px) {
+      .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.1rem 1rem 1rem;
+      box-shadow: var(--shadow);
+      transition: box-shadow .2s, transform .2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .kpi-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+    .kpi-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--brand), var(--brand-mid));
+    }
+    .kpi-icon { font-size: 1.5rem; margin-bottom: .5rem; display: block; }
+    .kpi-label { font-size: .72rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+    .kpi-value { font-size: 1.6rem; font-weight: 800; color: var(--text); line-height: 1.1; margin: .25rem 0 .2rem; letter-spacing: -.02em; }
+    .kpi-sub { font-size: .72rem; color: var(--muted); line-height: 1.4; }
+    .kpi-highlight .kpi-value { color: var(--brand); }
+
+    /* ── CHARTS ──────────────────────────────────────────── */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    @media(min-width: 640px) {
+      .charts-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    .chart-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.1rem 1.1rem;
+      box-shadow: var(--shadow);
+    }
+    .chart-title {
+      font-size: .85rem; font-weight: 700; color: var(--text);
+      margin-bottom: 1rem;
+    }
+    .chart-wrap { position: relative; }
+    .chart-wrap canvas { max-height: 240px; }
+
+    /* ── TABLE ───────────────────────────────────────────── */
+    .table-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+    .table-head {
+      padding: 1rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .table-head h3 { font-size: .95rem; font-weight: 700; color: var(--text); }
+    .metrics-list { list-style: none; }
+    .metric-row {
+      display: flex; align-items: center;
+      padding: .75rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+      gap: .75rem;
+    }
+    .metric-row:last-child { border-bottom: none; }
+    .metric-row:hover { background: var(--bg); }
+    .metric-name { font-size: .82rem; font-weight: 600; color: var(--text); min-width: 155px; flex-shrink: 0; }
+    .metric-bar-wrap { flex: 1; height: 6px; background: var(--brand-light); border-radius: 99px; overflow: hidden; }
+    .metric-bar { height: 100%; background: linear-gradient(90deg, var(--brand), var(--brand-mid)); border-radius: 99px; transition: width .8s ease; }
+    .metric-val { font-size: .82rem; font-weight: 700; color: var(--brand-dark); min-width: 90px; text-align: right; }
+
+    /* ── CARDS INFO ──────────────────────────────────────── */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: .875rem;
+      margin-bottom: 2rem;
+    }
+    .info-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.1rem;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+    .info-card-icon { font-size: 2rem; margin-bottom: .5rem; }
+    .info-card-label { font-size: .75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: .3rem; }
+    .info-card-value { font-size: 1.8rem; font-weight: 800; color: var(--brand); letter-spacing: -.03em; }
+    .info-card-sub { font-size: .75rem; color: var(--muted); margin-top: .25rem; }
+
+    /* ── FOOTER ──────────────────────────────────────────── */
+    .footer {
+      text-align: center;
+      padding: 1.5rem 1rem 2rem;
+      font-size: .78rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      line-height: 1.7;
+    }
+    .footer strong { color: var(--brand-dark); }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <div class="header-badge">Dados atualizados em 23/05/2026</div>
+    <h1>Lali Santos</h1>
+    <p class="header-subtitle">Relatório de Performance · Meta Ads</p>
+    <div class="header-period">📅 01/05/2026 – 22/05/2026</div>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- AVISO -->
+  <div class="notice">
+    <span class="notice-icon">⚠️</span>
+    <span><strong>Sobre o período exibido:</strong> Os dados exibidos correspondem ao período de campanha ativa (01/05 a 22/05/2026). Meses anteriores serão incluídos conforme o histórico for sincronizado com o Meta Ads Manager.</span>
+  </div>
+
+  <!-- KPIs -->
+  <p class="section-title">Principais Indicadores</p>
+  <div class="kpi-grid">
+
+    <div class="kpi-card kpi-highlight">
+      <span class="kpi-icon">💰</span>
+      <div class="kpi-label">Investimento Total</div>
+      <div class="kpi-value">R$&nbsp;650,79</div>
+      <div class="kpi-sub">Verba total aplicada no período</div>
+    </div>
+
+    <div class="kpi-card">
+      <span class="kpi-icon">👆</span>
+      <div class="kpi-label">Cliques no Link</div>
+      <div class="kpi-value">6.904</div>
+      <div class="kpi-sub">Pessoas que clicaram nos links dos anúncios</div>
+    </div>
+
+    <div class="kpi-card kpi-highlight">
+      <span class="kpi-icon">📊</span>
+      <div class="kpi-label">CTR — Taxa de Cliques</div>
+      <div class="kpi-value">6,58%</div>
+      <div class="kpi-sub">A cada 100 visualizações, ~7 clicaram</div>
+    </div>
+
+    <div class="kpi-card">
+      <span class="kpi-icon">💵</span>
+      <div class="kpi-label">CPC — Custo por Clique</div>
+      <div class="kpi-value">R$&nbsp;0,08</div>
+      <div class="kpi-sub">Custo médio por cada clique obtido</div>
+    </div>
+
+    <div class="kpi-card">
+      <span class="kpi-icon">👥</span>
+      <div class="kpi-label">Alcance</div>
+      <div class="kpi-value">69.036</div>
+      <div class="kpi-sub">Pessoas únicas impactadas pelos anúncios</div>
+    </div>
+
+    <div class="kpi-card kpi-highlight">
+      <span class="kpi-icon">❤️</span>
+      <div class="kpi-label">Engajamento Total</div>
+      <div class="kpi-value">41.858</div>
+      <div class="kpi-sub">Reações, comentários, compartilhamentos e salvamentos</div>
+    </div>
+
+  </div>
+
+  <!-- GRÁFICOS -->
+  <p class="section-title">Visualizações Gráficas</p>
+  <div class="charts-grid">
+
+    <div class="chart-card">
+      <div class="chart-title">🍩 Distribuição de Ações</div>
+      <div class="chart-wrap">
+        <canvas id="donutChart"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title">📊 Métricas Principais</div>
+      <div class="chart-wrap">
+        <canvas id="barChart"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TABELA DETALHADA -->
+  <p class="section-title">Detalhamento Completo</p>
+  <div class="table-card">
+    <div class="table-head">
+      <h3>Todas as métricas do período</h3>
+    </div>
+    <ul class="metrics-list" id="metricsList"></ul>
+  </div>
+
+  <!-- SEGUIDORES + VÍDEOS -->
+  <p class="section-title">Crescimento e Vídeos</p>
+  <div class="info-grid">
+
+    <div class="info-card">
+      <div class="info-card-icon">👤</div>
+      <div class="info-card-label">Novos Seguidores</div>
+      <div class="info-card-value">17</div>
+      <div class="info-card-sub">Ganhos na Página no período</div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-card-icon">🎬</div>
+      <div class="info-card-label">Views de Vídeo</div>
+      <div class="info-card-value">22.023</div>
+      <div class="info-card-sub">Visualizações totais nos vídeos</div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-card-icon">📄</div>
+      <div class="info-card-label">Landing Page Views</div>
+      <div class="info-card-value">1.261</div>
+      <div class="info-card-sub">Acessos confirmados à página de destino</div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-card-icon">💬</div>
+      <div class="info-card-label">Mensagens Iniciadas</div>
+      <div class="info-card-value">20</div>
+      <div class="info-card-sub">Conversas abertas via anúncios</div>
+    </div>
+
+  </div>
+
+</main>
+
+<footer class="footer">
+  <strong>Relatório gerado por Caribe Tráfego</strong> · 23/05/2026<br>
+  Dados extraídos diretamente do Meta Ads Manager
+</footer>
+
+<script>
+  // ── Formatação BR ─────────────────────────────
+  function fmtN(n) {
+    return n.toLocaleString('pt-BR');
+  }
+  function fmtR(n) {
+    return 'R$ ' + n.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+  function fmtPct(n) {
+    return n.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}) + '%';
+  }
+
+  // ── Cores ────────────────────────────────────
+  const C = '#7C3AED';
+  const CM = '#A78BFA';
+  const CL = '#C4B5FD';
+  const CD = '#5B21B6';
+  const CX = '#DDD6FE';
+
+  // ── DONUT ─────────────────────────────────────
+  const donutCtx = document.getElementById('donutChart').getContext('2d');
+  new Chart(donutCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Reações (11.803)', 'Views de Vídeo (22.023)', 'Cliques no Link (6.904)', 'Salvamentos (523)', 'Comentários (70)'],
+      datasets: [{
+        data: [11803, 22023, 6904, 523, 70],
+        backgroundColor: [C, CM, CL, CD, CX],
+        borderWidth: 2,
+        borderColor: '#fff',
+        hoverOffset: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            font: { size: 10 },
+            padding: 10,
+            boxWidth: 12,
+            generateLabels(chart) {
+              const d = chart.data;
+              return d.labels.map((label, i) => ({
+                text: label,
+                fillStyle: d.datasets[0].backgroundColor[i],
+                strokeStyle: '#fff',
+                lineWidth: 1,
+                index: i
+              }));
+            }
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label(ctx) {
+              const total = ctx.dataset.data.reduce((a,b)=>a+b,0);
+              const pct = ((ctx.raw/total)*100).toFixed(1);
+              return ' ' + fmtN(ctx.raw) + ' (' + pct + '%)';
+            }
+          }
+        }
+      }
+    }
+  });
+
+  // ── BAR ───────────────────────────────────────
+  const barCtx = document.getElementById('barChart').getContext('2d');
+  new Chart(barCtx, {
+    type: 'bar',
+    data: {
+      labels: ['Impressões', 'Alcance', 'Cliques\nTotais', 'Cliques\nno Link', 'Engajamento', 'Views\nVídeo'],
+      datasets: [{
+        label: 'Valor',
+        data: [125416, 69036, 8248, 6904, 41858, 22023],
+        backgroundColor: [C, CM, CL, CD, C, CM],
+        borderRadius: 6,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label(ctx) { return ' ' + fmtN(ctx.raw); }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { font: { size: 10 } }
+        },
+        y: {
+          grid: { color: '#F3F4F6' },
+          ticks: {
+            font: { size: 10 },
+            callback(v) {
+              if (v >= 1000) return (v/1000).toFixed(0) + 'k';
+              return v;
+            }
+          }
+        }
+      }
+    }
+  });
+
+  // ── TABELA COM BARRAS ─────────────────────────
+  const metrics = [
+    { name: 'Impressões',              val: 125416,  fmt: fmtN(125416) },
+    { name: 'Alcance',                 val: 69036,   fmt: fmtN(69036) },
+    { name: 'Engajamento Total',       val: 41858,   fmt: fmtN(41858) },
+    { name: 'Cliques Totais',          val: 8248,    fmt: fmtN(8248) },
+    { name: 'Cliques no Link',         val: 6904,    fmt: fmtN(6904) },
+    { name: 'Cliques Únicos',          val: 6202,    fmt: fmtN(6202) },
+    { name: 'Views de Vídeo',          val: 22023,   fmt: fmtN(22023) },
+    { name: 'Reações',                 val: 11803,   fmt: fmtN(11803) },
+    { name: 'Salvamentos',             val: 523,     fmt: fmtN(523) },
+    { name: 'Landing Page Views',      val: 1261,    fmt: fmtN(1261) },
+    { name: 'Mensagens Iniciadas',     val: 20,      fmt: fmtN(20) },
+    { name: 'Comentários',             val: 70,      fmt: fmtN(70) },
+    { name: 'CPM',                     val: 5.19,    fmt: fmtR(5.19) },
+    { name: 'CPC',                     val: 0.08,    fmt: fmtR(0.08) },
+    { name: 'CTR',                     val: 6.58,    fmt: fmtPct(6.58) },
+    { name: 'Investimento',            val: 650.79,  fmt: fmtR(650.79) },
+  ];
+
+  // Normaliza por grupos independentes para os valores $
+  const maxAbsolute = Math.max(...metrics.filter(m => m.val > 1).map(m => m.val));
+  const list = document.getElementById('metricsList');
+  metrics.forEach(m => {
+    const pct = m.val >= 1 ? Math.round((m.val / maxAbsolute) * 100) : Math.max(2, Math.round(m.val * 15));
+    const li = document.createElement('li');
+    li.className = 'metric-row';
+    li.innerHTML = `
+      <span class="metric-name">${m.name}</span>
+      <div class="metric-bar-wrap">
+        <div class="metric-bar" style="width:${Math.min(pct,100)}%"></div>
+      </div>
+      <span class="metric-val">${m.fmt}</span>
+    `;
+    list.appendChild(li);
+  });
+</script>
+</body>
+</html>
