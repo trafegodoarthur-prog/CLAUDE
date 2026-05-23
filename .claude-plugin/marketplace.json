@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-marketplace",
+  "name": "caribetrafego",
+  "owner": {
+    "name": "Caribe Trafego",
+    "email": "caribetrafego@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "frontend-design",
+      "source": "./frontend-design",
+      "description": "Especialista em design frontend avançado — design systems, acessibilidade, responsividade e animações para sites e apps.",
+      "version": "0.1.0",
+      "keywords": [
+        "frontend",
+        "design",
+        "ui",
+        "ux",
+        "accessibility",
+        "responsive",
+        "design-system",
+        "animations"
+      ]
+    }
+  ]
+}
