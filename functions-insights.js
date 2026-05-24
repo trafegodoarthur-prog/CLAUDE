@@ -31,12 +31,14 @@ export async function onRequest(context) {
   const F_ACCOUNT = 'impressions,clicks,ctr,spend,actions';
 
   const base = `https://graph.facebook.com/v21.0/${ACCOUNT_ID}/insights`;
+  const tr      = encodeURIComponent(JSON.stringify({ since: period_start, until: period_end }));
+  const trPrev  = encodeURIComponent(JSON.stringify({ since: prev_start,   until: prev_end }));
   const urls = {
-    ads:       `${base}?level=ad&fields=${F_AD}&since=${period_start}&until=${period_end}&access_token=${TOKEN}`,
-    adsets:    `${base}?level=adset&fields=${F_ADSET}&since=${period_start}&until=${period_end}&access_token=${TOKEN}`,
-    breakdown: `${base}?fields=${F_ACCOUNT}&breakdowns=age,gender&since=${period_start}&until=${period_end}&access_token=${TOKEN}`,
-    thisWeek:  `${base}?fields=${F_ACCOUNT}&since=${period_start}&until=${period_end}&access_token=${TOKEN}`,
-    prevWeek:  `${base}?fields=${F_ACCOUNT}&since=${prev_start}&until=${prev_end}&access_token=${TOKEN}`,
+    ads:       `${base}?level=ad&fields=${F_AD}&time_range=${tr}&access_token=${TOKEN}`,
+    adsets:    `${base}?level=adset&fields=${F_ADSET}&time_range=${tr}&access_token=${TOKEN}`,
+    breakdown: `${base}?fields=${F_ACCOUNT}&breakdowns=age,gender&time_range=${tr}&access_token=${TOKEN}`,
+    thisWeek:  `${base}?fields=${F_ACCOUNT}&time_range=${tr}&access_token=${TOKEN}`,
+    prevWeek:  `${base}?fields=${F_ACCOUNT}&time_range=${trPrev}&access_token=${TOKEN}`,
   };
 
   try {

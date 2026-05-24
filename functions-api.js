@@ -20,7 +20,8 @@ export async function onRequest(context) {
     apiUrl = `https://graph.facebook.com/v21.0/me/accounts?fields=id,name,fan_count,followers_count&access_token=${TOKEN}`;
   } else {
     const fields = 'impressions,reach,clicks,unique_clicks,ctr,cpc,cpm,spend,actions';
-    apiUrl = `https://graph.facebook.com/v21.0/${ACCOUNT_ID}/insights?fields=${fields}&since=${since}&until=${until}&time_increment=1&access_token=${TOKEN}`;
+    const timeRange = encodeURIComponent(JSON.stringify({ since, until }));
+    apiUrl = `https://graph.facebook.com/v21.0/${ACCOUNT_ID}/insights?fields=${fields}&time_range=${timeRange}&time_increment=1&access_token=${TOKEN}`;
   }
 
   try {
