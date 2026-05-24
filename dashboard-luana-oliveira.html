@@ -241,7 +241,7 @@ button{cursor:pointer;font-family:inherit}
     <div class="foll-card" aria-label="Seguidores">
       <div class="foll-num" id="follNum">—</div>
       <div class="foll-label">Seguidores na Página</div>
-      <div class="foll-page">luanaoliveira</div>
+      <div class="foll-page" data-page-id="553911131133273">luanaoliveira</div>
     </div>
   </section>
 </div>
@@ -532,9 +532,10 @@ async function loadData(){
     updateChart(months);
     updateMonthCmp(months);
 
-    fetch('/api?endpoint=page').then(r=>r.json()).then(pd=>{
-      const pages=(pd.data||[]).filter(p=>parseInt(p.followers_count||0)>0);
-      if (pages.length) document.getElementById('follNum').textContent=n(pages[0].followers_count);
+    fetch('/api?endpoint=page&_='+Date.now()).then(r=>r.json()).then(pd=>{
+      const pageId = document.querySelector('.foll-page')?.dataset.pageId;
+      const page = (pd.data||[]).find(p => p.id === pageId);
+      if (page) document.getElementById('follNum').textContent = n(page.followers_count);
     }).catch(()=>{});
 
     const now = new Date().toLocaleTimeString('pt-BR');
